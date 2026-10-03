@@ -1,4 +1,7 @@
-CREATE TABLE IF NOT EXISTS documents (
+CREATE TYPE document_type_enum AS ENUM ('PASSPORT', 'NATIONAL_ID', 'TRAVEL_DECLARATION');
+CREATE TYPE verification_status_enum AS ENUM ('PENDING', 'VERIFIED', 'REJECTED');
+
+CREATE TABLE documents (
     document_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     application_id UUID NOT NULL,
     document_type document_type_enum NOT NULL,
