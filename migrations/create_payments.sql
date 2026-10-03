@@ -15,7 +15,7 @@ CREATE TABLE payments (
     initiated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     completed_at TIMESTAMPTZ,
     
-    -- Foreign Key constraint
+/** -- Foreign Key constraint
     CONSTRAINT fk_payments_application 
         FOREIGN KEY (application_id) 
         REFERENCES applications(application_id),
@@ -24,5 +24,5 @@ CREATE TABLE payments (
     CONSTRAINT chk_completed_at_status CHECK (
         (status IN ('COMPLETED', 'REFUNDED') AND completed_at IS NOT NULL) OR
         (status IN ('PENDING', 'FAILED') AND completed_at IS NULL)
-    )
+**/       
 );

@@ -11,7 +11,7 @@ CREATE TABLE notifications (
     message VARCHAR(300) NOT NULL,
     status notification_status_enum NOT NULL DEFAULT 'SENT',
     
-    -- Foreign Key constraints
+/**    -- Foreign Key constraints
     CONSTRAINT fk_notifications_user 
         FOREIGN KEY (user_id) 
         REFERENCES users(user_id),
@@ -19,4 +19,5 @@ CREATE TABLE notifications (
     CONSTRAINT fk_notifications_application 
         FOREIGN KEY (application_id) 
         REFERENCES applications(application_id)
+**/
 );
