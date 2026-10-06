@@ -1,12 +1,12 @@
 CREATE TABLE staff_profiles (
     user_id UUID PRIMARY KEY,
     employee_no VARCHAR(50) NOT NULL UNIQUE,
-    date_hired DATE NOT NULL,
+    date_hired DATE NOT NULL
 
 );
 
 CREATE TABLE applications (
-    application_id UUID GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    application_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     client_id UUID NOT NULL,
     assigned_agent_id UUID,
     current_stage_id SMALLINT,
