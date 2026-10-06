@@ -9,7 +9,7 @@ CREATE TABLE notifications (
     application_id UUID,
     channel notification_channel_enum NOT NULL,
     message VARCHAR(300) NOT NULL,
-    status notification_status_enum NOT NULL DEFAULT 'SENT',
+    status notification_status_enum NOT NULL DEFAULT 'SENT'
     
 /**    -- Foreign Key constraints
     CONSTRAINT fk_notifications_user 
