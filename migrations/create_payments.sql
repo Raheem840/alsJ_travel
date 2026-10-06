@@ -13,7 +13,7 @@ CREATE TABLE payments (
     transaction_reference VARCHAR(60) UNIQUE,
     status payment_status_enum NOT NULL DEFAULT 'PENDING',
     initiated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    completed_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ
     
 /** -- Foreign Key constraint
     CONSTRAINT fk_payments_application 
