@@ -1,5 +1,5 @@
 CREATE TABLE client_profiles (
-    user_id UUID PRIMARY KEY,
+    user_id UUID PRIMARY KEY DEFAULT,
     national_id VARCHAR(30) UNIQUE NOT NULL,
     date_of_birth DATE NULL,
     address VARCHAR(200) NULL,
