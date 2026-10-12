@@ -1,11 +1,8 @@
+-- Phase 1: tables. Foreign keys are added in migrations/relationships.
 CREATE TABLE staff_profiles (
     user_id UUID PRIMARY KEY,
     employee_no VARCHAR(50) NOT NULL UNIQUE,
-    date_hired DATE NOT NULL,
-
-    CONSTRAINT fk_staff_profiles_user
-        FOREIGN KEY (user_id)
-        REFERENCES users(user_id)
+    date_hired DATE NOT NULL
 );
 
 CREATE TABLE applications (
