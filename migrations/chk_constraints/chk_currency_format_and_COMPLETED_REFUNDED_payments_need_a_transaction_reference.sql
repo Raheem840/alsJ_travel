@@ -1,5 +1,5 @@
 -- =========================================================================
--- Script Name: add_payment_constraints.sql
+
 -- Description: Adds currency format, transaction reference, and completion 
 --              timestamp validation check constraints to the payments table.
 -- =========================================================================
