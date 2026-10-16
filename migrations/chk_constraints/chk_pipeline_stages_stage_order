@@ -1,0 +1,4 @@
+
+ALTER TABLE pipeline_stages 
+ADD CONSTRAINT chk_stage_order_range 
+CHECK (stage_order BETWEEN 1 AND 7);
