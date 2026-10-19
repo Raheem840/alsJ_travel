@@ -1,5 +1,4 @@
 -- =========================================================================
--- Script Name: stage_history_rules.sql
 -- Description: Enforces that only the initial history row can have a NULL 
 --              from_stage_id, and automatically creates the initial history 
 --              row upon application registration[cite: 4, 10].

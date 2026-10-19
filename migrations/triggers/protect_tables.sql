@@ -1,5 +1,4 @@
 -- =========================================================================
--- Script Name: protect_tables.sql
 -- Description: Refuses UPDATE and DELETE on stage_history, audit_logs, 
 --              and pipeline_stages while allowing inserts[cite: 4, 6].
 -- =========================================================================
