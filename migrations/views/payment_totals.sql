@@ -2,7 +2,7 @@
 -- VIEW: per application, total amount and number of COMPLETED payments.
 -- Supports the deposit rule (PDF p.4 and p.9).
 -- Safe to re-run: CREATE OR REPLACE VIEW.
--- NOTE: column names are ASSUMED; rename to match your schema if needed.
+-- Column names follow the group data dictionary (design PDF, Section 02).
 
 CREATE OR REPLACE VIEW v_application_payment_totals AS
 SELECT
