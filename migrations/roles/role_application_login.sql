@@ -7,11 +7,11 @@
 CREATE ROLE app_user WITH LOGIN PASSWORD 'SecureAppPassword123!';
 
 -- 2. Remove default public privileges from the database schema
-REVOKE ALL ON DATABASE alsj_db FROM PUBLIC;
+REVOKE ALL ON DATABASE alsj_travelagency_local FROM PUBLIC;
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC;
 
 -- 3. Grant connection and usage rights to the application login role
-GRANT CONNECT ON DATABASE alsj_db TO app_user;
+GRANT CONNECT ON DATABASE alsj_travelagency_local TO app_user;
 GRANT USAGE ON SCHEMA public TO app_user;
 
 -- 4. Grant appropriate table-level permissions (Adjust based on your runtime needs)
