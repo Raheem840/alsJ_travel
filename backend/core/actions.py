@@ -327,4 +327,5 @@ def new_notification(request):
         # there is no real SMS or email gateway in this project: the row is stored as SENT
         cur.execute("INSERT INTO notifications (user_id, application_id, channel, message, status) VALUES (%s, %s, %s, %s, 'SENT')",
                     [d['user_id'], d.get('application_id') or None, d['channel'], d['message'].strip()])
-    return form_page(request, 'Send a notification', fields, handler, 'notifications')
+    return form_page(request, 'Send a notification', fields, handler,
+                     lambda _: 'notifications' if request.session['user']['role'] == 'Director' else 'applications')

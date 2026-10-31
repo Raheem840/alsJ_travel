@@ -230,9 +230,8 @@ def dashboard(request):
                 count(*) FILTER (WHERE verification_status = 'REJECTED') AS rejected,
                 round(100.0 * count(*) FILTER (WHERE verification_status = 'REJECTED') / count(*), 1) AS rejected_percent
             FROM documents GROUP BY document_type ORDER BY 1"""),
-        ('Notification delivery by channel', """SELECT channel,
+            ('Notification delivery by channel', """SELECT channel,
                 count(*) FILTER (WHERE status = 'SENT') AS sent,
-                count(*) FILTER (WHERE status = 'DELIVERED') AS delivered,
                 count(*) FILTER (WHERE status = 'FAILED') AS failed
             FROM notifications GROUP BY channel ORDER BY 1"""),
     ]
