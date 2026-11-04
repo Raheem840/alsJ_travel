@@ -22,11 +22,11 @@ with tab1:
     dot = ('digraph P { rankdir=LR; bgcolor="transparent"; '
            'node [shape=box, style="rounded,filled", fontname="Courier", fontcolor=white, margin="0.2,0.12"]; '
            'edge [color="#5B6B7B"]; ' + " ".join(nodes + edges) + " }")
-    st.graphviz_chart(dot, use_container_width=True)
+    st.graphviz_chart(dot, width="stretch")
     st.caption("Teal stages currently hold applications. Grey stages are empty.")
     st.dataframe([{"Order": s["stage_order"], "Stage": s["stage_name"],
                    "Applications": s["n"], "Description": s["description"]} for s in stages],
-                 use_container_width=True, hide_index=True)
+                 width="stretch", hide_index=True)
 
 # ---------------- 2. who does what, and which tables are touched ----------------
 with tab2:
@@ -65,7 +65,7 @@ with tab2:
       assign -> appt;
       verify -> audit [style=dashed]; advance -> audit [style=dashed]; provider -> audit [style=dashed];
     }"""
-    st.graphviz_chart(FLOW, use_container_width=True)
+    st.graphviz_chart(FLOW, width="stretch")
     st.caption("Solid arrows = business flow. Dashed = audit logging. Brackets = tables written.")
 
 # ---------------- 3. follow a single application end to end ----------------
@@ -88,7 +88,7 @@ with tab3:
            JOIN pipeline_stages ts ON ts.stage_id = h.to_stage_id
            LEFT JOIN users u ON u.user_id = h.changed_by
            WHERE h.application_id = :a ORDER BY h.changed_at""", {"a": aid}),
-        use_container_width=True, hide_index=True)
+        width="stretch", hide_index=True)
 
     cl, cr = st.columns(2)
     with cl:
@@ -97,11 +97,11 @@ with tab3:
             """SELECT document_type::text AS "Type", verification_status::text AS "Status",
                       rejection_reason AS "Reason"
                FROM documents WHERE application_id = :a ORDER BY uploaded_at""", {"a": aid}),
-            use_container_width=True, hide_index=True)
+            width="stretch", hide_index=True)
     with cr:
         st.markdown("**Payments**")
         st.dataframe(fetch_df(
             """SELECT amount AS "Amount", currency AS "Cur", payment_method::text AS "Method",
                       status::text AS "Status"
                FROM payments WHERE application_id = :a ORDER BY initiated_at""", {"a": aid}),
-            use_container_width=True, hide_index=True)
+            width="stretch", hide_index=True)

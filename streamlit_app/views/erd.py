@@ -55,7 +55,7 @@ def build_dot():
 
 
 dot = build_dot()
-st.graphviz_chart(dot, use_container_width=True)
+st.graphviz_chart(dot, width="stretch")
 
 st.markdown(" ".join(f"<span style='background:{c};color:white;padding:2px 8px;border-radius:4px'>{g}</span>"
                      for g, (_, c) in GROUPS.items()), unsafe_allow_html=True)

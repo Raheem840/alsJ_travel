@@ -1,31 +1,45 @@
+import bcrypt  
 import streamlit as st
 from utils.db import fetch_all
+
 
 # ---------------------------------------------------------------
 # 1. THE RBAC TABLE: which pages each role may open.
 #    Keys must match roles.role_name (upper-cased, spaces -> _).
 #    Page keys must match the keys in app.py.
 # ---------------------------------------------------------------
-import bcrypt  
+
 ROLE_ACCESS = {
-    "DIRECTOR": ["home", "applications", "documents", "payments", "appointments",
-                 "notifications", "analytics", "system_flow", "table_viewer",
-                 "data_dictionary", "erd", "audit"],
-    "SECRETARY": ["home", "applications", "documents", "payments", "appointments",
-                  "notifications", "system_flow", "table_viewer"],
-    "AGENT": ["home", "applications", "documents", "appointments",
-              "notifications", "system_flow"],
-    "CLIENT": ["home", "applications", "documents", "payments",
-               "appointments", "notifications", "system_flow"],
+    "DIRECTOR": ["home", "applications", "clients", "employees", "documents", "payments",
+                 "appointments", "notifications", "analytics", "system_flow",
+                 "table_viewer", "data_dictionary", "erd", "audit"],
+    "SECRETARY": ["home", "applications", "clients", "documents", "payments",
+                  "appointments", "notifications", "system_flow", "table_viewer"],
+    "FIELD_AGENT": ["home", "applications", "my_clients", "documents",
+                    "appointments", "notifications"],
+    "DATA_ENTRY_STAFF": ["home", "applications", "documents", "payments",
+                         "appointments", "notifications", "system_flow"],
+    "CLIENT": ["home", "my_applications", "appointments", "notifications"],
 }
 
-# What each role may DO in the Table Viewer (separate from what it may SEE)
-CRUD_RIGHTS = {
-    "DIRECTOR": {"create", "update", "delete"},
-    "SECRETARY": {"create", "update"},          # no deleting
-}
-READ_ONLY_TABLES = {"audit_logs", "stage_history"}   # history must be immutable
-HIDDEN_TABLES = {"SECRETARY": {"audit_logs", "users"}}  # tables a role can't even list
+CRUD_RIGHTS = {"DIRECTOR": {"create", "update", "delete"}}      # Secretary = read-only browser
+READ_ONLY_TABLES = {"audit_logs", "stage_history", "pipeline_stages"}  # DB triggers forbid edits
+NO_ADD_TABLES = {"users", "client_profiles", "staff_profiles"}   # created together via forms
+LOCKED_COLUMNS = {("applications", "current_stage_id"),          # changed only through workflow
+                  ("documents", "verification_status"), ("payments", "status")}
+HIDDEN_TABLES = {"SECRETARY": {"audit_logs", "users"}}   # tables a role can't even list
+
+
+def perms(role_name):
+    """What a role may do on an application (mirrors the Django rules + DB triggers)."""
+    r = normalize_role(role_name)
+    return {
+        "assign": r in ("DIRECTOR", "SECRETARY"),
+        "stage": r in ("DIRECTOR", "FIELD_AGENT", "DATA_ENTRY_STAFF"),
+        "decide": r in ("FIELD_AGENT", "DATA_ENTRY_STAFF"),   # DB trigger: verifier role
+        "pay_status": r in ("DIRECTOR", "DATA_ENTRY_STAFF"),
+        "is_client": r == "CLIENT",
+    } # tables a role can't even list
 
 
 def can(role_name, action):
@@ -57,10 +71,13 @@ def login_as(user):
         "full_name": user["full_name"],
         "role_name": user["role_name"],
     }
+    st.session_state["go_home"] = True        # always land on Home after switching role
+    st.session_state["seen_unread"] = 0
 
 
 def logout():
     st.session_state.pop("user", None)
+    st.session_state.pop("seen_unread", None)
 
 
 # ---------------------------------------------------------------
@@ -95,6 +112,9 @@ def demo_login_screen():
     st.caption("Demo mode: choose a role to see the portal as that person.")
 
     users = _demo_users()
+    if st.button("🔄 Refresh people list"):
+        _demo_users.clear()
+        st.rerun()
     if not users:
         st.error("No active users found in the database.")
         st.stop()

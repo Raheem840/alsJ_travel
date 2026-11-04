@@ -19,7 +19,7 @@ with tab1:
     m2.metric("Columns", len(meta))
     m3.metric("Rows", f"{row_count(t):,}")
 
-    st.dataframe(dictionary_df(t), use_container_width=True, hide_index=True)
+    st.dataframe(dictionary_df(t), width="stretch", hide_index=True)
 
     used = {c["udt_name"] for c in meta if c["data_type"] == "USER-DEFINED"}
     if used:
@@ -60,6 +60,6 @@ with tab2:
             md.append("| " + " | ".join(str(x) for x in r) + " |")
         md.append("")
         with st.expander(f"{n}  ·  {len(d)} columns"):
-            st.dataframe(d, use_container_width=True, hide_index=True)
+            st.dataframe(d, width="stretch", hide_index=True)
     st.download_button("⬇️ Download as Markdown", "\n".join(md),
                        "data_dictionary.md", "text/markdown")

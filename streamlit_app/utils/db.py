@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
+from contextlib import contextmanager
 
 
 @st.cache_resource  # build the engine ONCE and reuse it on every rerun
@@ -35,3 +36,29 @@ def execute(sql, params=None):
     """Run an INSERT/UPDATE/DELETE inside a transaction (commits automatically)."""
     with get_engine().begin() as conn:
         conn.execute(text(sql), params or {})
+        
+
+def run(conn, sql, params=None):
+    """Execute one statement inside an open transaction (see tx())."""
+    return conn.execute(text(sql), params or {})
+
+
+@contextmanager
+def tx(actor_id=None):
+    """One atomic transaction. Also tells the DB who is acting (app.current_user_id)."""
+    with get_engine().begin() as conn:
+        if actor_id:
+            conn.execute(text("SELECT set_config('app.current_user_id', :u, true)"), {"u": str(actor_id)})
+        yield conn
+
+
+def audit(conn, user_id, action, entity_type, entity_id):
+    run(conn, """INSERT INTO audit_logs (user_id, action, entity_type, entity_id)
+                 VALUES (:u, :a, :t, :e)""",
+        {"u": str(user_id), "a": action, "t": entity_type, "e": str(entity_id)})
+
+
+def db_message(e):
+    """First line of the database's own error, in plain words."""
+    msg = str(getattr(e, "orig", e)).strip()
+    return msg.splitlines()[0] if msg else "unknown error"

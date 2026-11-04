@@ -2,7 +2,7 @@ import datetime as dt
 import pandas as pd
 import streamlit as st
 from utils.auth import (guard, current_user, normalize_role, can, hash_password,
-                        READ_ONLY_TABLES, HIDDEN_TABLES)
+                        READ_ONLY_TABLES, HIDDEN_TABLES,NO_ADD_TABLES, LOCKED_COLUMNS)
 from utils.db import fetch_all, fetch_df, execute
 from utils.schema import (q, list_relations, columns_meta, primary_keys,
                           foreign_keys, enum_values, row_count)
@@ -109,6 +109,8 @@ def editable_cols(insert):
         n = c["column_name"]
         if is_auto(c):
             continue
+        if not insert and (table, n) in LOCKED_COLUMNS:
+            continue
         if not insert and (n in pks or n == "password_hash"):
             continue
         if "timestamp" in c["data_type"] and c["is_nullable"] == "YES":
@@ -166,7 +168,7 @@ c1, c2, c3 = st.columns([1, 2, 1])
 limit = c1.number_input("Rows to load", 10, 2000, 200, 10)
 search = c2.text_input("🔎 Search all columns")
 c3.write("")
-c3.button("🔄 Refresh", use_container_width=True)
+c3.button("🔄 Refresh", width="stretch")
 
 order_by = next((f"{q(c)} DESC" for c in ("created_at", "initiated_at", "changed_at",
                  "uploaded_at", "scheduled_datetime") if c in colnames), "1")
@@ -181,7 +183,7 @@ tab_browse, tab_add = st.tabs(["📄 Browse & manage", "➕ Add record"])
 
 with tab_browse:
     ver = st.session_state.get("grid_ver", 0)
-    ev = st.dataframe(df, use_container_width=True, hide_index=True,
+    ev = st.dataframe(df, width="stretch", hide_index=True,
                       on_select="rerun" if manageable else "ignore",
                       selection_mode="single-row", key=f"grid_{table}_{ver}")
     st.download_button("⬇️ Download CSV", df.to_csv(index=False), f"{table}.csv", "text/csv")
@@ -227,6 +229,8 @@ with tab_browse:
 with tab_add:
     if read_only:
         st.info("This relation is read-only.")
+    elif table in NO_ADD_TABLES:
+        st.info("Use the Clients / Employees pages: they create the user and profile together.")
     elif not can(role, "create"):
         st.info("Your role cannot add records.")
     else:

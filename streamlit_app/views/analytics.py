@@ -45,35 +45,35 @@ k4.metric("Document rejection", f"{100 * rej['rejected_documents'].sum() / tot:.
 if cur:
     st.plotly_chart(style(px.bar(rev_c, x="month", y="net_revenue", color="payment_method",
                                  barmode="group", title=f"Net revenue by month and method ({cur})",
-                                 color_discrete_sequence=PALETTE)), use_container_width=True)
+                                 color_discrete_sequence=PALETTE)), width="stretch")
 
 c1, c2 = st.columns(2)
 c1.plotly_chart(style(px.bar(stages, x="n", y="stage_name", orientation="h",
                              title="Applications per pipeline stage",
-                             color_discrete_sequence=PALETTE)), use_container_width=True)
+                             color_discrete_sequence=PALETTE)), width="stretch")
 c2.plotly_chart(style(px.pie(mix, names="service_type", values="n", hole=0.45,
                              title="Service mix", color_discrete_sequence=PALETTE)),
-                use_container_width=True)
+                width="stretch")
 
 c3, c4 = st.columns(2)
 c3.plotly_chart(style(px.bar(rej, x="document_type", y="rejection_percentage",
                              title="Document rejection rate (%)",
-                             color_discrete_sequence=PALETTE)), use_container_width=True)
+                             color_discrete_sequence=PALETTE)), width="stretch")
 long = notif.melt(id_vars="channel", value_vars=["sent_count", "failed_count"],
                   var_name="outcome", value_name="count")
 c4.plotly_chart(style(px.bar(long, x="channel", y="count", color="outcome", barmode="stack",
                              title="Notification delivery by channel",
-                             color_discrete_sequence=PALETTE)), use_container_width=True)
+                             color_discrete_sequence=PALETTE)), width="stretch")
 
 c5, c6 = st.columns(2)
 c5.plotly_chart(style(px.bar(dest, x="n", y="destination", orientation="h",
                              title="Top destinations", color_discrete_sequence=PALETTE)),
-                use_container_width=True)
+                width="stretch")
 c6.plotly_chart(style(px.line(monthly, x="month", y="n", markers=True,
                               title="New applications per month",
-                              color_discrete_sequence=PALETTE)), use_container_width=True)
+                              color_discrete_sequence=PALETTE)), width="stretch")
 
 with st.expander("Raw report views"):
-    st.dataframe(rev, use_container_width=True, hide_index=True)
-    st.dataframe(rej, use_container_width=True, hide_index=True)
-    st.dataframe(notif, use_container_width=True, hide_index=True)
+    st.dataframe(rev, width="stretch", hide_index=True)
+    st.dataframe(rej, width="stretch", hide_index=True)
+    st.dataframe(notif, width="stretch", hide_index=True)
