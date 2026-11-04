@@ -13,6 +13,11 @@ def need(**fields):
             raise FormError(f"Please fill in: {label.replace('_', ' ')}.")
 
 
+def gkey(name):
+    """Grid key that changes after every write, so a stale selection can't hit the wrong row."""
+    return f"{name}_{st.session_state.get('grid_ver', 0)}"
+
+
 def attempt(fn, success="Done."):
     """Run a write. Success: flash + rerun. Failure: show the DATABASE's own message."""
     try:
@@ -23,10 +28,6 @@ def attempt(fn, success="Done."):
     except Exception as e:
         st.error(f"The database refused this: {db_message(e)}")
         return
-    def gkey(name):
-        """Grid key that changes after every write, so a stale selection can't hit the wrong row."""
-        return f"{name}_{st.session_state.get('grid_ver', 0)}"
-    
     st.session_state["grid_ver"] = st.session_state.get("grid_ver", 0) + 1
     st.session_state["flash"] = f"✅ {success}"
     st.rerun()
