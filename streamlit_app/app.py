@@ -1,6 +1,16 @@
 import streamlit as st
 from utils.auth import current_user, demo_login_screen, logout, allowed_pages
 from utils.notify import ensure_schema, unread_count
+from utils.db import get_engine
+from sqlalchemy import text
+
+try:
+    with get_engine().connect() as conn:
+        result = conn.execute(text("SELECT version();")).fetchone()
+        st.success(f"Successfully connected to Neon! PostgreSQL version: {result[0]}")
+except Exception as e:
+    st.error(f"Database connection failed: {e}")
+    st.stop()
 
 st.set_page_config(page_title="ALSJ Travel Agency", page_icon="✈️", layout="wide")
 
