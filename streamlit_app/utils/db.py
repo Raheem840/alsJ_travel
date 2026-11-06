@@ -5,17 +5,20 @@ from sqlalchemy.engine import URL
 from contextlib import contextmanager
 
 
-@st.cache_resource  # build the engine ONCE and reuse it on every rerun
+@st.cache_resource
 def get_engine():
     c = st.secrets["db"]
     url = URL.create(
         drivername="postgresql+psycopg2",
         username=c["user"],
-        password=c["password"],  # special characters like @ are escaped safely
+        password=c["password"],
         host=c["host"],
         port=int(c["port"]),
         database=c["name"],
+        query={"sslmode": "require"},
     )
+    # Print the exact URL to the Streamlit Cloud logs to verify it's Neon, not localhost
+    print(f"DEBUG - Generated Database URL: {url}")
     return create_engine(url, pool_pre_ping=True)
 
 
