@@ -5,22 +5,6 @@ from utils.db import get_engine
 from sqlalchemy import text
 st.subheader("🔍 Streamlit Secrets Diagnostic")
 
-# Check if secrets exist at all
-if not st.secrets:
-    st.error("❌ st.secrets is completely empty! You have not added secrets in the Streamlit Cloud dashboard.")
-else:
-    st.success("✅ st.secrets is loaded.")
-    st.write("Available top-level keys:", list(st.secrets.keys()))
-    
-    if "db" in st.secrets:
-        st.success("✅ '[db]' block found!")
-        c = st.secrets["db"]
-        st.write(f"Target Host configured: `{c.get('host', 'MISSING')}`")
-        st.write(f"Target User configured: `{c.get('user', 'MISSING')}`")
-    else:
-        st.error("❌ '[db]' section is MISSING in your Streamlit Cloud secrets!")
-
-st.stop()  # Pause here so we can read the diagnostic output on screen
 
 st.set_page_config(page_title="ALSJ Travel Agency", page_icon="✈️", layout="wide")
 
