@@ -15,6 +15,7 @@ def get_engine():
         host=c["host"],
         port=int(c["port"]),
         database=c["name"],
+        query={"sslmode": "require"},  # Required for secure connection to Neon
     )
     return create_engine(url, pool_pre_ping=True)
 
